@@ -63,6 +63,7 @@ public class HazelcastSessionDistributionTests extends AbstractDistributionTest
      * This simulate the onlyClient option which means the JVM running Jetty is only an Hazelcast client and not part
      * of the cluster
      */
+    @Disabled("Requires Docker - no Docker environment available on CI workers")
     @Test
     public void testHazelcastRemoteOnlyClient() throws Exception
     {
