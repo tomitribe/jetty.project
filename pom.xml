@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.eclipse.jetty</groupId>
   <artifactId>jetty-project</artifactId>
-  <version>9.4.59-SNAPSHOT</version>
+  <version>9.4.59-TT.1-SNAPSHOT</version>
   <name>Jetty :: Project</name>
   <description>The Eclipse Jetty Project</description>
   <packaging>pom</packaging>
@@ -168,9 +168,9 @@
   </licenses>
 
   <scm>
-    <connection>scm:git:https://github.com/jetty/jetty.project.git</connection>
-    <developerConnection>scm:git:git@github.com:eclipse/jetty.project.git</developerConnection>
-    <url>https://github.com/jetty/jetty.project</url>
+    <connection>scm:git:https://github.com/tomitribe/jetty.project.git</connection>
+    <developerConnection>scm:git:git@github.com:tomitribe/jetty.project.git</developerConnection>
+    <url>https://github.com/tomitribe/jetty.project</url>
   </scm>
 
   <modules>
@@ -248,9 +248,6 @@
                   <version>[1.8,)</version>
                   <message>[ERROR] OLD JDK [${java.version}] in use. Jetty ${project.version} requires JDK 1.8.0 or newer</message>
                 </requireJavaVersion>
-                <versionOsgiRule implementation="org.eclipse.jetty.toolchain.enforcer.rules.RequireOsgiCompatibleVersionRule" />
-                <versionRedhatRule implementation="org.eclipse.jetty.toolchain.enforcer.rules.RequireRedhatCompatibleVersionRule" />
-                <versionDebianRule implementation="org.eclipse.jetty.toolchain.enforcer.rules.RequireDebianCompatibleVersionRule" />
                 <requireUpperBoundDeps>
                   <excludes>
                     <exclude>javax.enterprise:cdi-api</exclude>
@@ -1852,12 +1849,15 @@
 
   <distributionManagement>
     <repository>
-      <id>sonatype-cp</id>
-      <url>https://repo.maven.apache.org/maven2</url>
+      <id>tomitribe.releases.https</id>
+      <name>Tomitribe Release Distribution Repository</name>
+      <url>https://repository.tomitribe.com/service/local/staging/deploy/maven2</url>
     </repository>
+
     <snapshotRepository>
-      <id>sonatype-cp</id>
-      <url>https://central.sonatype.com/repository/maven-snapshots</url>
+      <id>tomitribe.snapshots.https</id>
+      <name>Tomitribe Development Snapshot Repository</name>
+      <url>https://repository.tomitribe.com/content/repositories/snapshots-tomitribe</url>
     </snapshotRepository>
   </distributionManagement>
 
