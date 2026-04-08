@@ -4,13 +4,13 @@
   <parent>
     <groupId>org.eclipse.jetty.tests</groupId>
     <artifactId>test-sessions-parent</artifactId>
-    <version>9.4.59-TT.1-SNAPSHOT</version>
+    <version>9.4.59-TT.1</version>
   </parent>
   <artifactId>test-memcached-sessions</artifactId>
   <name>Jetty Tests :: Sessions :: Memcached</name>
   <properties>
     <bundle-symbolic-name>${project.groupId}.sessions.memcached</bundle-symbolic-name>
-    <memcached.docker.version></memcached.docker.version>
+    <memcached.docker.version />
   </properties>
   <dependencies>
     <dependency>

@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.eclipse.jetty</groupId>
   <artifactId>jetty-project</artifactId>
-  <version>9.4.59-TT.1-SNAPSHOT</version>
+  <version>9.4.59-TT.1</version>
   <name>Jetty :: Project</name>
   <description>The Eclipse Jetty Project</description>
   <packaging>pom</packaging>
@@ -151,7 +151,7 @@
     <spring-boot.version>2.1.1.RELEASE</spring-boot.version>
     <surefire.rerunFailingTestsCount>0</surefire.rerunFailingTestsCount>
     <testcontainers.version>1.20.4</testcontainers.version>
-    <unix.socket.tmp></unix.socket.tmp>
+    <unix.socket.tmp />
 
   </properties>
 
@@ -170,6 +170,7 @@
     <connection>scm:git:https://github.com/tomitribe/jetty.project.git</connection>
     <developerConnection>scm:git:git@github.com:tomitribe/jetty.project.git</developerConnection>
     <url>https://github.com/tomitribe/jetty.project</url>
+    <tag>jetty-project-9.4.59-TT.1</tag>
   </scm>
 
   <modules>
