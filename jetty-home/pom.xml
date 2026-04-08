@@ -142,7 +142,7 @@
 
           <execution>
             <id>copy-lib-deps</id>
-            <phase>generate-resources</phase>
+            <phase>prepare-package</phase>
             <goals>
               <goal>copy-dependencies</goal>
             </goals>
@@ -160,7 +160,7 @@
           </execution>
           <execution>
             <id>copy-lib-src-deps</id>
-            <phase>generate-resources</phase>
+            <phase>prepare-package</phase>
             <goals>
               <goal>copy-dependencies</goal>
             </goals>
@@ -179,7 +179,7 @@
           </execution>
           <execution>
             <id>copy-lib-websocket-deps</id>
-            <phase>generate-resources</phase>
+            <phase>prepare-package</phase>
             <goals>
               <goal>copy-dependencies</goal>
             </goals>
@@ -192,7 +192,7 @@
           </execution>
           <execution>
             <id>copy-lib-websocket-src-deps</id>
-            <phase>generate-resources</phase>
+            <phase>prepare-package</phase>
             <goals>
               <goal>copy-dependencies</goal>
             </goals>
@@ -206,7 +206,7 @@
           </execution>
           <execution>
             <id>copy-lib-http2-deps</id>
-            <phase>generate-resources</phase>
+            <phase>prepare-package</phase>
             <goals>
               <goal>copy-dependencies</goal>
             </goals>
@@ -219,7 +219,7 @@
           </execution>
           <execution>
             <id>copy-lib-http2-src-deps</id>
-            <phase>generate-resources</phase>
+            <phase>prepare-package</phase>
             <goals>
               <goal>copy-dependencies</goal>
             </goals>
@@ -233,7 +233,7 @@
           </execution>
           <execution>
             <id>copy-lib-fcgi-deps</id>
-            <phase>generate-resources</phase>
+            <phase>prepare-package</phase>
             <goals>
               <goal>copy-dependencies</goal>
             </goals>
@@ -245,7 +245,7 @@
           </execution>
           <execution>
             <id>copy-lib-fcgi-src-deps</id>
-            <phase>generate-resources</phase>
+            <phase>prepare-package</phase>
             <goals>
               <goal>copy-dependencies</goal>
             </goals>
@@ -258,7 +258,7 @@
           </execution>
           <execution>
             <id>copy-lib-spring-deps</id>
-            <phase>generate-resources</phase>
+            <phase>prepare-package</phase>
             <goals>
               <goal>copy-dependencies</goal>
             </goals>
@@ -271,7 +271,7 @@
           </execution>
           <execution>
             <id>copy-lib-spring-src-deps</id>
-            <phase>generate-resources</phase>
+            <phase>prepare-package</phase>
             <goals>
               <goal>copy-dependencies</goal>
             </goals>
@@ -312,7 +312,7 @@
           </execution>
           <execution>
             <id>copy-servlet-src-deps</id>
-            <phase>generate-resources</phase>
+            <phase>prepare-package</phase>
             <goals>
               <goal>copy-dependencies</goal>
             </goals>
@@ -325,7 +325,7 @@
           </execution>
           <execution>
             <id>copy-annotations-deps</id>
-            <phase>generate-resources</phase>
+            <phase>prepare-package</phase>
             <goals>
               <goal>copy-dependencies</goal>
             </goals>
@@ -338,7 +338,7 @@
           </execution>
           <execution>
             <id>copy-annotations-src-deps</id>
-            <phase>generate-resources</phase>
+            <phase>prepare-package</phase>
             <goals>
               <goal>copy-dependencies</goal>
             </goals>
@@ -352,7 +352,7 @@
           </execution>
           <execution>
             <id>copy-apache-jsp-deps</id>
-            <phase>generate-resources</phase>
+            <phase>prepare-package</phase>
             <goals>
               <goal>copy-dependencies</goal>
             </goals>
@@ -368,7 +368,7 @@
           </execution>
           <execution>
             <id>copy-apache-jsp-src-deps</id>
-            <phase>generate-resources</phase>
+            <phase>prepare-package</phase>
             <goals>
               <goal>copy-dependencies</goal>
             </goals>
@@ -385,7 +385,7 @@
           </execution>
           <execution>
             <id>copy-apache-jstl-deps</id>
-            <phase>generate-resources</phase>
+            <phase>prepare-package</phase>
             <goals>
               <goal>copy-dependencies</goal>
             </goals>
@@ -399,7 +399,7 @@
           </execution>
           <execution>
             <id>copy-apache-jstl-src-deps</id>
-            <phase>generate-resources</phase>
+            <phase>prepare-package</phase>
             <goals>
               <goal>copy-dependencies</goal>
             </goals>
@@ -414,7 +414,7 @@
           </execution>
           <execution>
             <id>copy-jaspi-deps</id>
-            <phase>generate-resources</phase>
+            <phase>prepare-package</phase>
             <goals>
               <goal>copy-dependencies</goal>
             </goals>
@@ -427,7 +427,7 @@
           </execution>
           <execution>
             <id>copy-jaspi-src-deps</id>
-            <phase>generate-resources</phase>
+            <phase>prepare-package</phase>
             <goals>
               <goal>copy-dependencies</goal>
             </goals>
