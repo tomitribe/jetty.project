@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.eclipse.jetty.tests</groupId>
     <artifactId>test-sessions-parent</artifactId>
-    <version>11.0.27-TT.1-SNAPSHOT</version>
+    <version>11.0.27-TT.1</version>
   </parent>
   <artifactId>test-sessions-common</artifactId>
   <name>Jetty Tests :: Sessions :: Common</name>
@@ -49,5 +49,5 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-  <build></build>
+  <build />
 </project>

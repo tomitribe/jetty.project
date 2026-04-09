@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.eclipse.jetty</groupId>
     <artifactId>jetty-project</artifactId>
-    <version>11.0.27-TT.1-SNAPSHOT</version>
+    <version>11.0.27-TT.1</version>
   </parent>
   <artifactId>jetty-home</artifactId>
   <packaging>pom</packaging>
@@ -339,7 +339,7 @@
             <phase>process-resources</phase>
             <configuration>
               <target>
-                <chmod dir="${assembly-directory}/bin" includes="**/*.sh" perm="755"></chmod>
+                <chmod dir="${assembly-directory}/bin" includes="**/*.sh" perm="755" />
               </target>
             </configuration>
           </execution>

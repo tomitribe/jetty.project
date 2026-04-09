@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.eclipse.jetty.osgi</groupId>
     <artifactId>jetty-osgi-project</artifactId>
-    <version>11.0.27-TT.1-SNAPSHOT</version>
+    <version>11.0.27-TT.1</version>
   </parent>
   <artifactId>jetty-osgi-boot</artifactId>
   <name>Jetty :: OSGi :: Boot</name>
@@ -109,7 +109,7 @@
                 <!--delete file="target/classes/META-INF/MANIFEST.MF" /-->
                 <copy todir="target/classes/jettyhome">
                   <fileset dir="jettyhome">
-                    <exclude name="**/*.log"></exclude>
+                    <exclude name="**/*.log" />
                   </fileset>
                 </copy>
               </target>
