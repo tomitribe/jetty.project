@@ -171,6 +171,7 @@
   <scm>
     <connection>scm:git:https://github.com/tomitribe/jetty.project.git</connection>
     <developerConnection>scm:git:git@github.com:tomitribe/jetty.project.git</developerConnection>
+    <tag>HEAD</tag>
     <url>https://github.com/tomitribe/jetty.project</url>
   </scm>
 
@@ -2041,6 +2042,7 @@
           <goals>deploy</goals>
           <preparationGoals>clean install</preparationGoals>
           <mavenExecutorId>forked-path</mavenExecutorId>
+          <arguments>-Dspotless.check.skip=true</arguments>
         </configuration>
       </plugin>
       <plugin>
