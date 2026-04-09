@@ -44,6 +44,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Disabled("Requires Docker - no Docker environment available on CI workers")
 public class HazelcastSessionDistributionTests extends AbstractSessionDistributionTests
 {
     private static final Logger HAZELCAST_LOG = LoggerFactory.getLogger("org.eclipse.jetty.tests.distribution.session.HazelcastLogs");

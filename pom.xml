@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.eclipse.jetty</groupId>
   <artifactId>jetty-project</artifactId>
-  <version>11.0.27-SNAPSHOT</version>
+  <version>11.0.27-TT.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Jetty :: Project</name>
   <description>The Eclipse Jetty Project</description>
@@ -169,9 +169,9 @@
   </modules>
 
   <scm>
-    <connection>scm:git:https://github.com/jetty/jetty.project.git</connection>
-    <developerConnection>scm:git:git@github.com:jetty/jetty.project.git</developerConnection>
-    <url>https://github.com/jetty/jetty.project</url>
+    <connection>scm:git:https://github.com/tomitribe/jetty.project.git</connection>
+    <developerConnection>scm:git:git@github.com:tomitribe/jetty.project.git</developerConnection>
+    <url>https://github.com/tomitribe/jetty.project</url>
   </scm>
 
   <issueManagement>
@@ -181,12 +181,14 @@
 
   <distributionManagement>
     <repository>
-      <id>sonatype-cp</id>
-      <url>https://repo.maven.apache.org/maven2</url>
+      <id>tomitribe.releases.https</id>
+      <name>Tomitribe Release Distribution Repository</name>
+      <url>https://repository.tomitribe.com/service/local/staging/deploy/maven2</url>
     </repository>
     <snapshotRepository>
-      <id>sonatype-cp</id>
-      <url>https://central.sonatype.com/repository/maven-snapshots</url>
+      <id>tomitribe.snapshots.https</id>
+      <name>Tomitribe Development Snapshot Repository</name>
+      <url>https://repository.tomitribe.com/content/repositories/snapshots-tomitribe</url>
     </snapshotRepository>
   </distributionManagement>
   <properties>
@@ -325,7 +327,6 @@
     <!-- if changing this version please update default in MongoTestHelper you will get thanks from Eclipse IDE users -->
     <mongo.docker.version>3.2.20</mongo.docker.version>
     <mongodb.version>3.12.14</mongodb.version>
-    <njord.version>0.8.3</njord.version>
     <openpojo.version>0.9.1</openpojo.version>
     <org.osgi.annotation.version>8.1.0</org.osgi.annotation.version>
     <org.osgi.core.version>6.0.0</org.osgi.core.version>
@@ -1529,11 +1530,6 @@
           <version>${license.maven.plugin.version}</version>
         </plugin>
         <plugin>
-          <groupId>eu.maveniverse.maven.plugins</groupId>
-          <artifactId>njord</artifactId>
-          <version>${njord.version}</version>
-        </plugin>
-        <plugin>
           <groupId>net.webtide.tools</groupId>
           <artifactId>webtide-release-tools-plugin</artifactId>
           <version>1.1</version>
@@ -2030,9 +2026,6 @@
                   <version>[11,)</version>
                   <message>[ERROR] OLD JDK [${java.version}] in use. Jetty ${project.version} requires JDK 11 or newer</message>
                 </requireJavaVersion>
-                <versionOsgiRule implementation="org.eclipse.jetty.toolchain.enforcer.rules.RequireOsgiCompatibleVersionRule"></versionOsgiRule>
-                <versionRedhatRule implementation="org.eclipse.jetty.toolchain.enforcer.rules.RequireRedhatCompatibleVersionRule"></versionRedhatRule>
-                <versionDebianRule implementation="org.eclipse.jetty.toolchain.enforcer.rules.RequireDebianCompatibleVersionRule"></versionDebianRule>
                 <requireUpperBoundDeps></requireUpperBoundDeps>
               </rules>
             </configuration>
@@ -2046,7 +2039,6 @@
           <autoVersionSubmodules>true</autoVersionSubmodules>
           <useReleaseProfile>false</useReleaseProfile>
           <goals>deploy</goals>
-          <arguments>-Peclipse-release</arguments>
           <preparationGoals>clean install</preparationGoals>
           <mavenExecutorId>forked-path</mavenExecutorId>
         </configuration>
@@ -2174,13 +2166,6 @@
       </plugin>
     </plugins>
 
-    <extensions>
-      <extension>
-        <groupId>eu.maveniverse.maven.njord</groupId>
-        <artifactId>extension3</artifactId>
-        <version>${njord.version}</version>
-      </extension>
-    </extensions>
   </build>
 
   <profiles>
