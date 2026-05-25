@@ -13,7 +13,7 @@
 
 package org.eclipse.jetty.security.authentication;
 
-import java.io.IOException;
+import java.io.Serial;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
@@ -30,22 +30,18 @@ import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpStatus;
+import org.eclipse.jetty.security.AuthenticationState;
+import org.eclipse.jetty.security.Authenticator;
 import org.eclipse.jetty.security.SecurityHandler;
 import org.eclipse.jetty.security.ServerAuthException;
-import org.eclipse.jetty.security.UserAuthentication;
-import org.eclipse.jetty.server.Authentication;
-import org.eclipse.jetty.server.Authentication.User;
+import org.eclipse.jetty.security.UserIdentity;
 import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.UserIdentity;
+import org.eclipse.jetty.server.Response;
+import org.eclipse.jetty.util.Callback;
 import org.eclipse.jetty.util.QuotedStringTokenizer;
 import org.eclipse.jetty.util.TypeUtil;
-import org.eclipse.jetty.util.security.Constraint;
 import org.eclipse.jetty.util.security.Credential;
 import org.eclipse.jetty.util.thread.AutoLock;
 import org.slf4j.Logger;
@@ -54,13 +50,14 @@ import org.slf4j.LoggerFactory;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
- * The nonce max age in ms can be set with the {@link SecurityHandler#setInitParameter(String, String)}
- * using the name "maxNonceAge".  The nonce max count can be set with {@link SecurityHandler#setInitParameter(String, String)}
+ * The nonce max age in ms can be set with the {@link SecurityHandler#setParameter(String, String)}
+ * using the name "maxNonceAge".  The nonce max count can be set with {@link SecurityHandler#setParameter(String, String)}
  * using the name "maxNonceCount".  When the age or count is exceeded, the nonce is considered stale.
  */
 public class DigestAuthenticator extends LoginAuthenticator
 {
     private static final Logger LOG = LoggerFactory.getLogger(DigestAuthenticator.class);
+    private static final QuotedStringTokenizer TOKENIZER = QuotedStringTokenizer.builder().delimiters("=, ").returnDelimiters().allowEmbeddedQuotes().build();
 
     private final SecureRandom _random = new SecureRandom();
     private final Map<String, Nonce> _nonces = new ConcurrentHashMap<>();
@@ -78,14 +75,14 @@ public class DigestAuthenticator extends LoginAuthenticator
     }
 
     @Override
-    public void setConfiguration(AuthConfiguration configuration)
+    public void setConfiguration(Configuration configuration)
     {
         super.setConfiguration(configuration);
 
-        String mna = configuration.getInitParameter("maxNonceAge");
+        String mna = configuration.getParameter("maxNonceAge");
         if (mna != null)
             setMaxNonceAge(Long.parseLong(mna));
-        String mnc = configuration.getInitParameter("maxNonceCount");
+        String mnc = configuration.getParameter("maxNonceCount");
         if (mnc != null)
             setMaxNonceCount(Integer.parseInt(mnc));
     }
@@ -155,92 +152,74 @@ public class DigestAuthenticator extends LoginAuthenticator
     }
 
     @Override
-    public String getAuthMethod()
+    public String getAuthenticationType()
     {
-        return Constraint.__DIGEST_AUTH;
+        return Authenticator.DIGEST_AUTH;
     }
 
     @Override
-    public boolean secureResponse(ServletRequest req, ServletResponse res, boolean mandatory, User validatedUser) throws ServerAuthException
+    public AuthenticationState validateRequest(Request req, Response res, Callback callback) throws ServerAuthException
     {
-        return true;
-    }
+        String credentials = req.getHeaders().get(HttpHeader.AUTHORIZATION);
 
-    @Override
-    public Authentication validateRequest(ServletRequest req, ServletResponse res, boolean mandatory) throws ServerAuthException
-    {
-        if (!mandatory)
-            return new DeferredAuthentication(this);
-
-        HttpServletRequest request = (HttpServletRequest)req;
-        HttpServletResponse response = (HttpServletResponse)res;
-        String credentials = request.getHeader(HttpHeader.AUTHORIZATION.asString());
-
-        try
+        boolean stale = false;
+        if (credentials != null)
         {
-            Request baseRequest = Request.getBaseRequest(request);
-
-            boolean stale = false;
-            if (credentials != null)
+            Digest digest = parseDigest(req.getMethod(), credentials);
+            if (digest != null)
             {
-                Digest digest = parseDigest(request.getMethod(), credentials);
-                if (digest != null)
+                if (verifyOpaque(digest))
                 {
-                    if (verifyOpaque(digest))
+                    int n = checkNonce(digest);
+                    if (n > 0)
                     {
-                        int n = checkNonce(digest);
-                        if (n > 0)
+                        // Nonce correctness is a prerequisite for trusting digest.uri.
+                        // Check that the request URI matches the credential's URI.
+                        if (Objects.equals(digest.uri, req.getHttpURI().getPathQuery()))
                         {
-                            // Nonce correctness is a prerequisite for trusting digest.uri.
-                            // Check that the request URI matches the credential's URI.
-                            if (Objects.equals(digest.uri, baseRequest.getHttpURI().getPathQuery()))
-                            {
-                                UserIdentity user = login(digest.resolvedUserName, digest, request);
-                                if (user != null)
-                                    return new UserAuthentication(getAuthMethod(), user);
-                            }
+                            UserIdentity user = login(digest.resolvedUserName, digest, req, res);
+                            if (user != null)
+                                return new UserAuthenticationSucceeded(getAuthenticationType(), user);
                         }
-                        else if (n == 0)
-                        {
-                            // Only good nonces can be stale.
-                            stale = true;
-                        }
+                    }
+                    else if (n == 0)
+                    {
+                        // Only good nonces can be stale.
+                        stale = true;
                     }
                 }
             }
-
-            if (DeferredAuthentication.isDeferred(response))
-                return Authentication.UNAUTHENTICATED;
-
-            // Requests that don't have the Authorization header
-            // or that have it but it's invalid (e.g. missing/bad
-            // nonce, bad opaque, etc.) are replied with 401.
-
-            String domain = request.getContextPath();
-            if (domain == null)
-                domain = "/";
-
-            // RFC 7616[3.3]: only realm, domain, nonce, opaque, and qop must be quoted.
-            // Parameters stale and algorithm must not be quoted.
-            String value = "Digest realm=\"%s\"".formatted(_loginService.getName());
-            value += ", domain=\"%s\"".formatted(domain);
-            String nonce = newNonce(baseRequest);
-            value += ", nonce=\"%s\"".formatted(nonce);
-            value += ", opaque=\"%s\"".formatted(newOpaque(nonce));
-            value += ", stale=%s".formatted(stale);
-            value += ", algorithm=%s".formatted(getAlgorithm());
-            value += ", qop=\"auth\"";
-            value += ", charset=UTF-8";
-            value += ", userhash=%s".formatted(isUserHashing());
-            response.setHeader(HttpHeader.WWW_AUTHENTICATE.asString(), value);
-
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-            return Authentication.SEND_CONTINUE;
         }
-        catch (IOException e)
-        {
-            throw new ServerAuthException(e);
-        }
+
+        if (AuthenticationState.Deferred.isDeferred(res))
+            return null;
+
+        // Requests that don't have the Authorization header
+        // or that have it but it's invalid (e.g. missing/bad
+        // nonce, bad opaque, etc.) are replied with 401.
+
+        String domain = req.getContext().getContextPath();
+        if (domain == null)
+            domain = "/";
+
+        // RFC 7616[3.3]: only realm, domain, nonce, opaque, and qop must be quoted.
+        // Parameters stale and algorithm must not be quoted.
+        String value = "Digest realm=\"%s\"".formatted(_loginService.getName());
+        value += ", domain=\"%s\"".formatted(domain);
+        String nonce = newNonce(req);
+        value += ", nonce=\"%s\"".formatted(nonce);
+        value += ", opaque=\"%s\"".formatted(newOpaque(nonce));
+        value += ", stale=%s".formatted(stale);
+        value += ", algorithm=%s".formatted(getAlgorithm());
+        value += ", qop=\"auth\"";
+        value += ", charset=UTF-8";
+        value += ", userhash=%s".formatted(isUserHashing());
+
+        res.getHeaders().put(HttpHeader.WWW_AUTHENTICATE, value);
+
+        // Don't use AuthenticationState.writeError(), to avoid possibility of doing a Servlet error dispatch.
+        Response.writeError(req, res, callback, HttpStatus.UNAUTHORIZED_401);
+        return AuthenticationState.CHALLENGE;
     }
 
     private Digest parseDigest(String method, String credentials)
@@ -369,12 +348,12 @@ public class DigestAuthenticator extends LoginAuthenticator
     }
 
     @Override
-    public UserIdentity login(String username, Object credentials, ServletRequest request)
+    public UserIdentity login(String username, Object credentials, Request request, Response response)
     {
         Digest digest = (Digest)credentials;
         if (!Objects.equals(digest.realm, _loginService.getName()))
             return null;
-        return super.login(username, credentials, request);
+        return super.login(username, credentials, request, response);
     }
 
     public String newNonce(Request request)
@@ -388,7 +367,7 @@ public class DigestAuthenticator extends LoginAuthenticator
             int dataLength = 2 * Long.BYTES;
             byte[] bytes = new byte[dataLength + mac.getMacLength()];
             ByteBuffer byteBuffer = ByteBuffer.wrap(bytes);
-            byteBuffer.putLong(request.getTimeStamp()).putLong(_random.nextLong());
+            byteBuffer.putLong(Request.getTimeStamp(request)).putLong(_random.nextLong());
             mac.update(bytes, 0, dataLength);
             mac.doFinal(bytes, dataLength);
             return Base64.getEncoder().encodeToString(bytes);
@@ -533,7 +512,7 @@ public class DigestAuthenticator extends LoginAuthenticator
 
         private boolean seen(int number)
         {
-            try (AutoLock l = _lock.lock())
+            try (AutoLock ignored = _lock.lock())
             {
                 if (number >= _seen.size())
                     return true;
@@ -548,6 +527,7 @@ public class DigestAuthenticator extends LoginAuthenticator
     // reference to the outer class, that would make it non-serializable.
     private static class Digest extends Credential
     {
+        @Serial
         private static final long serialVersionUID = -2484639019549527724L;
 
         private final String method;

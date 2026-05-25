@@ -11,7 +11,7 @@
 // ========================================================================
 //
 
-package org.eclipse.jetty.test;
+package org.eclipse.jetty.ee10.test;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -24,7 +24,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -39,41 +38,25 @@ import org.eclipse.jetty.client.DigestAuthentication;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.PathRequestContent;
 import org.eclipse.jetty.client.StringRequestContent;
-import org.eclipse.jetty.ee9.nested.ServletConstraint;
-import org.eclipse.jetty.ee9.security.ConstraintMapping;
-import org.eclipse.jetty.ee9.security.ConstraintSecurityHandler;
-import org.eclipse.jetty.ee9.security.authentication.DigestAuthenticator;
-import org.eclipse.jetty.ee9.servlet.ServletContextHandler;
-import org.eclipse.jetty.ee9.servlet.ServletHolder;
+import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
+import org.eclipse.jetty.ee10.servlet.security.ConstraintMapping;
+import org.eclipse.jetty.ee10.servlet.security.ConstraintSecurityHandler;
 import org.eclipse.jetty.http.HttpHeader;
-import org.eclipse.jetty.client.api.AuthenticationStore;
-import org.eclipse.jetty.client.api.ContentResponse;
-import org.eclipse.jetty.client.api.Request;
-import org.eclipse.jetty.client.util.BytesRequestContent;
-import org.eclipse.jetty.client.util.DigestAuthentication;
-import org.eclipse.jetty.client.util.StringRequestContent;
 import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.http.HttpTester;
 import org.eclipse.jetty.security.AbstractLoginService;
-import org.eclipse.jetty.security.ConstraintMapping;
-import org.eclipse.jetty.security.ConstraintSecurityHandler;
+import org.eclipse.jetty.security.Constraint;
 import org.eclipse.jetty.security.RolePrincipal;
 import org.eclipse.jetty.security.UserPrincipal;
 import org.eclipse.jetty.security.authentication.DigestAuthenticator;
-import org.eclipse.jetty.server.Connector;
-import org.eclipse.jetty.server.NetworkConnector;
+import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.toolchain.test.MavenPaths;
 import org.eclipse.jetty.server.handler.DefaultHandler;
-import org.eclipse.jetty.server.handler.HandlerList;
-import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.toolchain.test.MavenPaths;
 import org.eclipse.jetty.util.IO;
-import org.eclipse.jetty.util.StringUtil;
-import org.eclipse.jetty.util.NanoTime;
 import org.eclipse.jetty.util.TypeUtil;
-import org.eclipse.jetty.util.security.Constraint;
 import org.eclipse.jetty.util.security.Credential;
 import org.eclipse.jetty.util.security.Password;
 import org.junit.jupiter.api.AfterEach;
@@ -119,7 +102,7 @@ public class DigestPostTest
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SECURITY);
         context.setContextPath("/test");
         _servlet = new PostServlet();
-        context.addServlet(new ServletHolder(_servlet), "/");
+        context.addServlet(_servlet, "/");
 
         TestLoginService realm = new TestLoginService(_realm);
         realm.putUser(_user, new Password(_password), new String[]{"testRole"});
@@ -130,15 +113,17 @@ public class DigestPostTest
         security.setAuthenticator(_authenticator);
         security.setLoginService(realm);
 
-        ServletConstraint constraint = new ServletConstraint("SecureTest", "testRole");
-        constraint.setAuthenticate(true);
+        Constraint constraint = new Constraint.Builder()
+            .name("SecureTest")
+            .roles("testRole")
+            .build();
         ConstraintMapping mapping = new ConstraintMapping();
         mapping.setConstraint(constraint);
         mapping.setPathSpec("/*");
 
         security.setConstraintMappings(Collections.singletonList(mapping));
 
-        _server.setHandler(context);
+        _server.setHandler(new Handler.Sequence(context, new DefaultHandler()));
 
         _server.start();
     }
@@ -351,9 +336,9 @@ public class DigestPostTest
         String a2 = method + ":" + uri;
         byte[] ha2 = md.digest(a2.getBytes(UTF_8));
 
-        String rsp = StringUtil.toHexString(ha1).toLowerCase(Locale.ROOT) + ":" + nonce + ":" + nc +
-            ":" + cnonce + ":auth:" + StringUtil.toHexString(ha2).toLowerCase(Locale.ROOT);
-        return StringUtil.toHexString(md.digest(rsp.getBytes(UTF_8))).toLowerCase(Locale.ROOT);
+        String rsp = TypeUtil.toString(ha1, 16) + ":" + nonce + ":" + nc +
+            ":" + cnonce + ":auth:" + TypeUtil.toString(ha2, 16);
+        return TypeUtil.toString(md.digest(rsp.getBytes(UTF_8)), 16);
     }
 
     private String nonceFrom(String authenticate)
