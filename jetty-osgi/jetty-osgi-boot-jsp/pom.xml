@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.eclipse.jetty.osgi</groupId>
     <artifactId>jetty-osgi-project</artifactId>
-    <version>11.0.27-TT.2-SNAPSHOT</version>
+    <version>11.0.27-TT.2</version>
   </parent>
   <artifactId>jetty-osgi-boot-jsp</artifactId>
   <name>Jetty :: OSGi :: Boot JSP</name>
@@ -53,7 +53,7 @@
         <configuration>
           <instructions>
             <Bundle-Name>Jetty-OSGi-Jasper Integration</Bundle-Name>
-            <Bundle-Classpath></Bundle-Classpath>
+            <Bundle-Classpath />
             <Fragment-Host>org.eclipse.jetty.osgi.boot</Fragment-Host>
             <Export-Package>!org.eclipse.jetty.osgi.boot.*</Export-Package>
             <Import-Package>${osgi.slf4j.import.packages},

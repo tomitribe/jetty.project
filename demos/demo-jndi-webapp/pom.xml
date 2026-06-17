@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.eclipse.jetty.demos</groupId>
     <artifactId>demos-parent</artifactId>
-    <version>11.0.27-TT.2-SNAPSHOT</version>
+    <version>11.0.27-TT.2</version>
   </parent>
   <artifactId>demo-jndi-webapp</artifactId>
   <packaging>war</packaging>
@@ -72,10 +72,10 @@
             <configuration>
               <target>
                 <concat destfile="${project.build.directory}/plugin-context.xml">
-                  <filelist dir="src/main/templates/" files="plugin-context-header.xml,env-definitions.xml"></filelist>
+                  <filelist dir="src/main/templates/" files="plugin-context-header.xml,env-definitions.xml" />
                 </concat>
                 <concat destfile="${project.build.directory}/test-jndi.xml">
-                  <filelist dir="src/main/templates/" files="jetty-test-jndi-header.xml,env-definitions.xml"></filelist>
+                  <filelist dir="src/main/templates/" files="jetty-test-jndi-header.xml,env-definitions.xml" />
                 </concat>
               </target>
             </configuration>

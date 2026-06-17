@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.eclipse.jetty.osgi</groupId>
     <artifactId>jetty-osgi-project</artifactId>
-    <version>11.0.27-TT.2-SNAPSHOT</version>
+    <version>11.0.27-TT.2</version>
   </parent>
   <artifactId>jetty-httpservice</artifactId>
   <name>Jetty :: OSGi :: HttpService</name>
@@ -68,7 +68,7 @@
             <configuration>
               <target>
                 <copy todir="target/classes/contexts">
-                  <fileset dir="contexts"></fileset>
+                  <fileset dir="contexts" />
                 </copy>
               </target>
             </configuration>
