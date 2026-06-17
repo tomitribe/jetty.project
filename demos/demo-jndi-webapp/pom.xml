@@ -72,10 +72,10 @@
             <configuration>
               <target>
                 <concat destfile="${project.build.directory}/plugin-context.xml">
-                  <filelist dir="src/main/templates/" files="plugin-context-header.xml,env-definitions.xml" />
+                  <filelist dir="src/main/templates/" files="plugin-context-header.xml,env-definitions.xml"></filelist>
                 </concat>
                 <concat destfile="${project.build.directory}/test-jndi.xml">
-                  <filelist dir="src/main/templates/" files="jetty-test-jndi-header.xml,env-definitions.xml" />
+                  <filelist dir="src/main/templates/" files="jetty-test-jndi-header.xml,env-definitions.xml"></filelist>
                 </concat>
               </target>
             </configuration>

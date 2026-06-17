@@ -472,7 +472,7 @@
           <dependency>
             <groupId>org.eclipse.jetty.quic</groupId>
             <artifactId>quic-quiche-foreign-incubator</artifactId>
-            <version>11.0.27-TT.1-SNAPSHOT</version>
+            <version>11.0.27-TT.2-SNAPSHOT</version>
           </dependency>
         </dependencies>
       </dependencyManagement>

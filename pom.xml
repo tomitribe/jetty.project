@@ -2027,7 +2027,7 @@
                   <version>[11,)</version>
                   <message>[ERROR] OLD JDK [${java.version}] in use. Jetty ${project.version} requires JDK 11 or newer</message>
                 </requireJavaVersion>
-                <requireUpperBoundDeps />
+                <requireUpperBoundDeps></requireUpperBoundDeps>
               </rules>
             </configuration>
           </execution>
@@ -2406,7 +2406,7 @@
         <module>javadoc</module>
       </modules>
       <properties>
-        <maven.repo.uri />
+        <maven.repo.uri></maven.repo.uri>
         <settingsPath>${env.GLOBAL_MVN_SETTINGS}</settingsPath>
         <!-- Defines a SpotBugs effort. Use "Max" to maximize the scan depth -->
         <spotbugs.effort>Default</spotbugs.effort>
