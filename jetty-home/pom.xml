@@ -339,7 +339,7 @@
             <phase>process-resources</phase>
             <configuration>
               <target>
-                <chmod dir="${assembly-directory}/bin" includes="**/*.sh" perm="755" />
+                <chmod dir="${assembly-directory}/bin" includes="**/*.sh" perm="755"></chmod>
               </target>
             </configuration>
           </execution>

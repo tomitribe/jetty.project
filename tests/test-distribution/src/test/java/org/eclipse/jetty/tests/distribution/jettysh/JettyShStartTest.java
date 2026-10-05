@@ -28,6 +28,7 @@ import org.eclipse.jetty.client.api.ContentResponse;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.tests.distribution.AbstractJettyHomeTest;
 import org.eclipse.jetty.toolchain.test.MavenPaths;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -107,6 +108,7 @@ public class JettyShStartTest extends AbstractJettyHomeTest
 
     @ParameterizedTest
     @MethodSource("jettyImages")
+    @Disabled("No Docker available in CI env")
     public void testStartStopJettyBase(ImageFromDSL jettyImage) throws Exception
     {
         ensureParentImagesExist(jettyImage);

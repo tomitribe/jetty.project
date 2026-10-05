@@ -470,8 +470,12 @@ public class HttpParser
                 throw new IllegalCharacterException(_state, t, buffer);
 
             case LF:
-                _cr = false;
-                break;
+                if (_cr)
+                {
+                    _cr = false;
+                    return HttpTokens.EOL_CRLF;
+                }
+                return HttpTokens.EOL_LF;
 
             case CR:
                 if (_cr)
@@ -1156,6 +1160,8 @@ public class HttpParser
             HttpTokens.Token t = next(buffer);
             if (t == null)
                 break;
+            if (t == HttpTokens.EOL_LF && _state == State.TRAILER)
+                checkViolation(Violation.LF_CHUNK_TERMINATION);
 
             if (_maxHeaderBytes > 0 && ++_headerBytes > _maxHeaderBytes)
             {
@@ -1760,6 +1766,8 @@ public class HttpParser
                     switch (t.getType())
                     {
                         case LF:
+                            if (t == HttpTokens.EOL_LF)
+                                checkViolation(Violation.LF_CHUNK_TERMINATION);
                             break;
 
                         case DIGIT:
@@ -1974,6 +1982,8 @@ public class HttpParser
 
     private boolean chunkSizeEnd(HttpTokens.Token t)
     {
+        if (t == HttpTokens.EOL_LF)
+            checkViolation(Violation.LF_CHUNK_TERMINATION);
         setChunkSizeState(ChunkSizeState.SIZE);
         _chunkSizeDigits = 0;
         if (_chunkLength == 0)

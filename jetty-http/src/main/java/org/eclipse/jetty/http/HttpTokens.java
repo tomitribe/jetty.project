@@ -161,6 +161,18 @@ public class HttpTokens
         }
     }
 
+    /**
+     * Distinct {@code Type.LF} token instances used by {@link HttpParser#next(java.nio.ByteBuffer)}
+     * to record, by object identity, whether a line-feed was preceded by a carriage-return.
+     * CVE-2026-19203 (GHSA-xc35-c22g-239h): a bare LF used to terminate a chunk-extension,
+     * chunk-data boundary, or trailer field was indistinguishable from a proper CRLF. Both
+     * instances carry {@code Type.LF} so every existing {@code case LF:} switch (which matches
+     * on type, not identity) keeps working unchanged; only the chunk/trailer-termination call
+     * sites that need to reject the bare-LF form check {@code token == EOL_LF} directly.
+     */
+    public static final Token EOL_LF = new Token(LINE_FEED, Type.LF);
+    public static final Token EOL_CRLF = new Token(LINE_FEED, Type.LF);
+
     public static final Token[] TOKENS = new Token[256];
 
     static
