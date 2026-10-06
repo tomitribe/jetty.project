@@ -459,8 +459,12 @@ public class HttpParser
                 throw new IllegalCharacterException(_state, t, buffer);
 
             case LF:
-                _cr = false;
-                break;
+                if (_cr)
+                {
+                    _cr = false;
+                    return HttpTokens.EOL_CRLF;
+                }
+                return HttpTokens.EOL_LF;
 
             case CR:
                 if (_cr)
@@ -1173,6 +1177,9 @@ public class HttpParser
 
                         case LF:
                         {
+                            if (_state == State.TRAILER && t == HttpTokens.EOL_LF && complianceViolation(HttpComplianceSection.NO_LF_CHUNK_TERMINATION))
+                                throw new BadMessageException(HttpStatus.BAD_REQUEST_400, "Bare LF terminating trailer field");
+
                             // process previous header
                             if (_state == State.HEADER)
                                 parsedHeader();
@@ -1734,6 +1741,8 @@ public class HttpParser
                     switch (t.getType())
                     {
                         case LF:
+                            if (t == HttpTokens.EOL_LF && complianceViolation(HttpComplianceSection.NO_LF_CHUNK_TERMINATION))
+                                throw new BadMessageException(HttpStatus.BAD_REQUEST_400, "Bare LF terminating chunk data");
                             break;
 
                         case DIGIT:
@@ -1767,6 +1776,8 @@ public class HttpParser
                     switch (t.getType())
                     {
                         case LF:
+                            if (t == HttpTokens.EOL_LF && complianceViolation(HttpComplianceSection.NO_LF_CHUNK_TERMINATION))
+                                throw new BadMessageException(HttpStatus.BAD_REQUEST_400, "Bare LF terminating chunk size");
                             if (_chunkLength == 0)
                             {
                                 setState(State.TRAILER);
@@ -1805,6 +1816,8 @@ public class HttpParser
                     switch (t.getType())
                     {
                         case LF:
+                            if (t == HttpTokens.EOL_LF && complianceViolation(HttpComplianceSection.NO_LF_CHUNK_TERMINATION))
+                                throw new BadMessageException(HttpStatus.BAD_REQUEST_400, "Bare LF terminating chunk extension");
                             if (_chunkLength == 0)
                             {
                                 setState(State.TRAILER);

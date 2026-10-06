@@ -38,7 +38,8 @@ public enum HttpComplianceSection
     NO_UTF16_ENCODINGS("https://www.w3.org/International/iri-edit/draft-duerst-iri.html#anchor29", "UTF16 encoding"),
     NO_USER_INFO("https://datatracker.ietf.org/doc/html/rfc9110#name-deprecation-of-userinfo-in-", "User info in authority"),
     NO_AMBIGUOUS_EMPTY_SEGMENT("https://tools.ietf.org/html/rfc3986#section-3.3", "Ambiguous URI empty segment"),
-    NO_AMBIGUOUS_PATH_ENCODING("https://tools.ietf.org/html/rfc3986#section-3.3", "Ambiguous URI path encoding");
+    NO_AMBIGUOUS_PATH_ENCODING("https://tools.ietf.org/html/rfc3986#section-3.3", "Ambiguous URI path encoding"),
+    NO_LF_CHUNK_TERMINATION("https://www.rfc-editor.org/rfc/rfc9112#section-7.1", "Chunk extension, chunk data, and trailer fields must be terminated by CRLF, not a bare LF (CVE-2026-19203)");
 
     final String url;
     final String description;

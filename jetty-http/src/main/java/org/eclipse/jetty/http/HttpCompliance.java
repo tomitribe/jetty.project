@@ -62,7 +62,7 @@ public enum HttpCompliance // TODO in Jetty-10 convert this enum to a class so t
      * {@link HttpComplianceSection#NO_AMBIGUOUS_PATH_SEGMENTS} and
      * {@link HttpComplianceSection#NO_AMBIGUOUS_PATH_SEPARATORS}.
      */
-    RFC2616_LEGACY(sectionsBySpec("RFC2616,-FIELD_COLON,-METHOD_CASE_SENSITIVE,-TRANSFER_ENCODING_WITH_CONTENT_LENGTH,-MULTIPLE_CONTENT_LENGTHS")),
+    RFC2616_LEGACY(sectionsBySpec("RFC2616,-FIELD_COLON,-METHOD_CASE_SENSITIVE,-TRANSFER_ENCODING_WITH_CONTENT_LENGTH,-MULTIPLE_CONTENT_LENGTHS,-NO_LF_CHUNK_TERMINATION")),
 
     /**
      * The strict RFC2616 support mode
@@ -73,7 +73,7 @@ public enum HttpCompliance // TODO in Jetty-10 convert this enum to a class so t
      * Jetty's legacy RFC7230 support, which excludes
      * {@link HttpComplianceSection#METHOD_CASE_SENSITIVE}.
      */
-    RFC7230_LEGACY(sectionsBySpec("RFC7230,-METHOD_CASE_SENSITIVE")),
+    RFC7230_LEGACY(sectionsBySpec("RFC7230,-METHOD_CASE_SENSITIVE,-NO_LF_CHUNK_TERMINATION")),
 
     /**
      * The RFC7230 support mode
